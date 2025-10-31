@@ -1,0 +1,45 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+<meta charset="utf-8" /> 
+<meta name="viewport" content="width=device-width,initial-scale=1" /> 
+<title>Contact — Client Form Validation Demo</title> 
+<style> body { font-family: Arial, sans-serif; margin: 2rem; } 
+.field { margin-bottom: 1rem; } 
+.error { color: #b00020; font-size: 0.9rem; display:block; } 
+.invalid { border-color: #b00020; } 
+#formStatus { margin-top: 1rem; } 
+</style> 
+</head> 
+<body> 
+<h1>Contact Us</h1> 
+<form id="contactForm" novalidate> 
+<div class="field"> 
+<label for="name">Name</label><br /> 
+<input id="name" name="name" type="text" required minlength="2" /> 
+<span class="error" data-for="name" aria-live="polite"></span> 
+</div> 
+<div class="field"> 
+<label for="email">Email</label><br /> 
+<input id="email" name="email" type="email" required /> 
+<span class="error" data-for="email" aria-live="polite"></span> 
+</div> 
+<div class="field"> 
+<label for="phone">Phone (optional)</label><br /> 
+<input id="phone" name="phone" type="tel" /> 
+<span class="error" data-for="phone" aria-live="polite"></span> 
+</div> 
+<div class="field"> 
+<label for="message">Message</label><br /> 
+<textarea id="message" name="message" required 
+minlength="5"></textarea> 
+<span class="error" data-for="message" aria-live="polite"></span> 
+</div> 
+<div id="formStatus" role="status" aria-live="polite"></div> 
+<button id="submitBtn" type="submit">Send</button> 
+</form>
+<script src="/js/form-validation.js" defer></script>
+
+</body>
+
+</html>
