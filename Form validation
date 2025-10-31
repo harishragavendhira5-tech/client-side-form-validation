@@ -1,0 +1,125 @@
+// Client-side form validation and submit (plain JS)
+
+(function () { const form
+
+decument.getElementById('contactForm');
+
+if
+
+(!form) return;
+
+const status Node
+
+document.getElementById('formStatus'); const
+
+submitBtn
+
+document.ElementById('submitBtn');
+
+// Validation rules
+
+const rules = {
+
+};
+
+name: { required: true, min: 2 }, email: { required:
+
+true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ }, phone:
+
+{ required: false, pattern: /^\+?[0-9\-()\s]{7,20}$/
+
+}, message: { required: true, min: 5}
+
+function
+
+BetErrorNode(name) {
+
+return form.querySelector('.error[data-for="" + name + '"]');
+} 
+function validateField(el) { const name = el.name; const val = String(el.value || '').trim(); const rule = rules[name]; if (!rule) return true; 
+if (rule.required && !val) return 'This field is required.'; if (rule.min && val.length < rule.min) return `Must be at least 
+${rule.min} characters.`; if (rule.pattern && val && !rule.pattern.test(val)) { if (name === 'email') return 'Enter a valid email address.'; if (name === 'phone') return 'Enter a valid phone number.'; return 'Invalid format.'; 
+} 
+return true; 
+} 
+function showError(el, msg) { const node = getErrorNode(el.name); if (msg) { el.classList.add('invalid'); el.setAttribute('aria-invalid', 'true'); if (node) node.textContent = msg; 
+} else { el.classList.remove('invalid'); el.removeAttribute('aria-invalid'); if (node) node.textContent = ''; } } 
+function validateForm() { const elements = Array.from(form.elements).filter(e => e.name); let firstInvalid = null; let ok = true; elements.forEach(el => { const res = validateField(el); if (res !== true) { ok = false; showError(el, res); if (!firstInvalid) firstInvalid = el; 
+} else { showError(el, ''); 
+} }); return { ok, firstInvalid }; } 
+
+// Debounce helper function debounce(fn, ms) { let t; return function () { const args = arguments; clearTimeout(t); t = setTimeout(() => fn.apply(null, args), ms); }; } 
+form.addEventListener('input', debounce(function (e) { if (!e.target.name) return; const res = validateField(e.target); showError(e.target, res === true ? '' : res); 
+if (submitBtn) submitBtn.disabled = !validateForm().ok; 
+}, 200)); 
+async function submitJSON(data) { if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending...'; 
+} statusNode.textContent = ''; try { const res = await fetch('/api/contacts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) 
+}); const payload = await res.json().catch(() => ({})); if (res.status === 201) { statusNode.textContent = 'Message sent.'; form.reset(); 
+// clear errors 
+Array.from(form.elements).forEach(el => { if (el.name) showError(el, 
+''); }); 
+} else if (res.status === 422 && payload.errors) { statusNode.textContent = 'Please fix highlighted fields.'; payload.errors.forEach(err => { const el = form.querySelector('[name="' + err.param + '"]'); if (el) showError(el, err.msg); }); 
+} else { statusNode.textContent = payload.error || 'Server error. Try again.'; } 
+} catch (err) { statusNode.textContent = 'Network error. Try again.';
+// Debounce helper function debounce(fn, ms) { let t; return function () { const args = arguments; clearTimeout(t); t = setTimeout(() => fn.apply(null, args), ms); }; } 
+form.addEventListener('input', debounce(function (e) { if (!e.target.name) return; const res = validateField(e.target); showError(e.target, res === true ? '' : res); 
+if (submitBtn) submitBtn.disabled = !validateForm().ok; 
+}, 200)); 
+async function submitJSON(data) { if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending...'; 
+} statusNode.textContent = ''; try { const res = await fetch('/api/contacts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) 
+}); const payload = await res.json().catch(() => ({})); if (res.status === 201) { statusNode.textContent = 'Message sent.'; form.reset(); 
+// clear errors 
+Array.from(form.elements).forEach(el => { if (el.name) showError(el, 
+''); }); 
+} else if (res.status === 422 && payload.errors) { statusNode.textContent = 'Please fix highlighted fields.'; payload.errors.forEach(err => { const el = form.querySelector('[name="' + err.param + '"]'); if (el) showError(el, err.msg); }); 
+} else { statusNode.textContent = payload.error || 'Server error. Try again.'; } 
+} catch (err) { statusNode.textContent = 'Network error. Try again.';
+} finally {
+
+if (submitBtn) {
+
+submitBtn.disabled = IvalidateForm().ok;
+
+submitBtn.textContent = 'Send';
+
+}
+
+}
+
+}
+
+form.addEventListener('submit', function (e) {
+
+e.preventDefault();
+
+const { ok, firstInvalid } = validateForm();
+
+if (!ok) {
+
+if (firstInvalid) firstInvalid.focus();
+
+return;
+
+}
+
+const data = {
+
+name: form.name.value.trim(),
+
+email: form.email.value.trim(),
+
+phone: form.phone.value.trim(),
+
+message: form.message.value.trim()
+
+};
+
+submitJSON(data);
+
+});
+
+// initial submit button state
+
+if (submitBtn) submitBtn.disabled !validateForm().ok;
+
+})();
